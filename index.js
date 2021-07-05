@@ -45,11 +45,29 @@ app.on('message', msg => {
         const monsterTypeList = ['곤충족', '공룡족', '기계족', '드래곤족', '마법사족', '물족', '번개족', '비행야수족', '사이버스족', '사이킥족', '식물족' ,'악마족' ,'암석족', '야수족', '야수전사족', '어류족', '언데드족', '전사족', '천사족', '파충류족', '해룡족', '화염족', '환룡족', '환신야수족', '창조신족']
         const monsterType = rd(monsterTypeList);
 
-
-
-        
         // 레벨, 랭크 수
         const stars = Math.floor(Math.random() * 13);
+
+        // 펜듈럼 스케일
+        let pendulumScaleMin = 0;
+        let pendulumScaleMax = 0;
+        for (let i = 0; i < 2; i++) {
+            let pendulumScale = Math.floor(Math.random() * 14);
+            if (i == 0) {
+                pendulumScaleMin = pendulumScale;
+            }else if(i == 1) {
+                pendulumScaleMax = pendulumScale;
+                if(pendulumScaleMin > pendulumScaleMax) {
+                    pendulumScale = pendulumScaleMin;
+                    pendulumScaleMin = pendulumScaleMax;
+                    pendulumScaleMax = pendulumScale;
+                }
+            }
+            
+        }
+        
+        console.log(pendulumScaleMin, pendulumScaleMax);
+        
 
         // 링크마커 방향 리스트
         const linkArrowsList = ['↖', '↑', '↗', '←', '→', '↙', '↓', '↘'];
@@ -65,13 +83,13 @@ app.on('message', msg => {
             let Arrows;
             do{
                 Arrows = rd(linkArrowsList);
-                console.log(Arrows);
+                // console.log(Arrows);
             } while(linkArrow.includes(Arrows))
             
             linkArrow.push(Arrows);
         }
 
-        console.log(cardType, attribute, monsterType, linkNumber, linkArrow);
+        // console.log(cardType, attribute, monsterType, linkNumber, linkArrow);
         
         const text = `[${name}]\n\n${description}`; // 카드 이름 줄바꿈 줄바꿈 효과 를 저장
         
@@ -85,7 +103,7 @@ app.on('message', msg => {
 
 function rd(value) {
     const rd = Math.floor(Math.random() * value.length);
-    const result = value[rd]
+    const result = value[rd];
     return result;
 }
 
