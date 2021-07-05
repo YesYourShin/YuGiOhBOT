@@ -32,14 +32,38 @@ app.on('message', msg => {
         // .replace()로 더미 줄바꿈 \n을 검색해서 줄바꿈으로 바꾼 다음 
         // 나온 배열을 descrption 변수에 저장
         const description = anyWords.generate(cardDescDict, '<START>', 10, 100).replace(/\\n/g, '\n'); 
+        
+        const cardType = ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '펜듈럼', '링크']
+        const typRd = rd(cardType);
+
+        const Attribute = ['어둠', '빛', '땅', '물', '화염', '바람', '신'];
+        const attRd = rd(Attribute);
+
+        const monType = ['곤충족', '공룡족', '기계족', '드래곤족', '마법사족', '물족', '번개족', '비행야수족', '사이버스족', '사이킥족', '식물족' ,'악마족' ,'암석족', '야수족', '야수전사족', '어류족', '언데드족', '전사족', '천사족', '파충류족', '해룡족', '화염족', '환룡족', '환신야수족', '창조신족']
+        const monRd = rd(Attribute);
+
+
+
+        console.log(typRd, attRd);
+
+        const stars = Math.floor(Math.random() * 13);
+
+        const link = ['↖', '↑', '↗', '←→', '↙', '↓', '↘'];
+        
         const text = `[${name}]\n\n${description}`; // 카드 이름 줄바꿈 줄바꿈 효과 를 저장
         
-        msg.channel.send(text); // 저장한 카드 이름고 효과를 메세지로 보냄
+        msg.channel.send(text); // 저장한 카드 이름과 효과를 메세지로 보냄
     }
 
     // 채팅에서 메세지가 들어왔을 때 실행할 콜백함수입니다.
     // indexOf('') !== -1을 이용해서 메세지 속에 단어가 있는지 확인
 
 });
+
+function rd(value) {
+    const rd = Math.floor(Math.random() * value.length);
+    const result = value[rd]
+    return result;
+}
 
 app.login(token); 
