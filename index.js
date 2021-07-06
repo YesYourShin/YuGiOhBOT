@@ -34,66 +34,76 @@ app.on('message', msg => {
         const description = anyWords.generate(cardDescDict, '<START>', 10, 100).replace(/\\n/g, '\n'); 
         
         // 카드 종류
-        const cardTypeList = ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '펜듈럼', '링크']
+        const cardTypeList = ['몬스터', '마법', '함정'];
         const cardType = rd(cardTypeList);
+
+        // 몬스터 카드 종류
+        const monsterCardTypeList = ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '펜듈럼', '링크']
+        const monsterCardType = rd(monsterCardTypeList);
 
         // 카드 속성
         const attributeList = ['어둠', '빛', '땅', '물', '화염', '바람', '신'];
         const attribute = rd(attributeList);
 
-        //몬스터 종류
+        // 몬스터 종족
         const monsterTypeList = ['곤충족', '공룡족', '기계족', '드래곤족', '마법사족', '물족', '번개족', '비행야수족', '사이버스족', '사이킥족', '식물족' ,'악마족' ,'암석족', '야수족', '야수전사족', '어류족', '언데드족', '전사족', '천사족', '파충류족', '해룡족', '화염족', '환룡족', '환신야수족', '창조신족']
         const monsterType = rd(monsterTypeList);
 
         // 레벨, 랭크 수
         const stars = Math.floor(Math.random() * 13);
 
+
         // 펜듈럼 스케일
         let pendulumScaleMin = 0;
         let pendulumScaleMax = 0;
-        for (let i = 0; i < 2; i++) {
-            let pendulumScale = Math.floor(Math.random() * 14);
-            if (i == 0) {
-                pendulumScaleMin = pendulumScale;
-            }else if(i == 1) {
-                pendulumScaleMax = pendulumScale;
-                if(pendulumScaleMin > pendulumScaleMax) {
-                    pendulumScale = pendulumScaleMin;
-                    pendulumScaleMin = pendulumScaleMax;
+        if (monsterCardType == '펜듈럼') {
+            for (let i = 0; i < 2; i++) {
+                let pendulumScale = Math.floor(Math.random() * 14);
+                if (i == 0) {
+                    pendulumScaleMin = pendulumScale;
+                }else if(i == 1) {
                     pendulumScaleMax = pendulumScale;
+                    if(pendulumScaleMin > pendulumScaleMax) {
+                        pendulumScale = pendulumScaleMin;
+                        pendulumScaleMin = pendulumScaleMax;
+                        pendulumScaleMax = pendulumScale;
+                    }
                 }
+                
             }
-            
         }
-        
         console.log(pendulumScaleMin, pendulumScaleMax);
         
-
         // 링크마커 방향 리스트
         const linkArrowsList = ['↖', '↑', '↗', '←', '→', '↙', '↓', '↘'];
-        
+                    
         // 링크 수
         const linkNumber = Math.floor((Math.random() * linkArrowsList.length));
-        
+
         // 마커 방향
         const linkArrow = [];
-        
-        // 링크 마커 방향 중복 제거해서 링크 수만큼 넣기
-        for (let i = 0; i < linkNumber; i++) {
-            let Arrows;
-            do{
-                Arrows = rd(linkArrowsList);
-                // console.log(Arrows);
-            } while(linkArrow.includes(Arrows))
-            
-            linkArrow.push(Arrows);
-        }
 
-        // console.log(cardType, attribute, monsterType, linkNumber, linkArrow);
+        if(monsterCardType == '링크') {
+            
+            
+            // 링크 마커 방향 중복 제거해서 링크 수만큼 넣기
+            for (let i = 0; i < linkNumber; i++) {
+                let Arrows;
+                do{
+                    Arrows = rd(linkArrowsList);
+                    // console.log(Arrows);
+                } while(linkArrow.includes(Arrows))
+                
+                linkArrow.push(Arrows);
+            }
+
+            // console.log(linkNumber, linkArrow);
+        }
+        console.log(monsterCardType, linkNumber, linkArrow);
         
         const text = `[${name}]\n\n${description}`; // 카드 이름 줄바꿈 줄바꿈 효과 를 저장
         
-        msg.channel.send(text); // 저장한 카드 이름과 효과를 메세지로 보냄
+        msg.channel.send("```\n" + text + "\n\```"); // 저장한 카드 이름과 효과를 코드 블럭 메세지로 보냄
     }
 
     // 채팅에서 메세지가 들어왔을 때 실행할 콜백함수입니다.
@@ -102,9 +112,8 @@ app.on('message', msg => {
 });
 
 function rd(value) {
-    const rd = Math.floor(Math.random() * value.length);
-    const result = value[rd];
-    return result;
+    const random = Math.floor(Math.random() * value.length);
+    return value[random];
 }
 
 app.login(token); 
