@@ -63,16 +63,22 @@ app.on('message', msg => {
         const stars = Math.floor(Math.random() * 13);
 
 //////////////////////////////////////////////////////////////////////////////////////////
-
+        
         // 마법 종류
         const spellTypeList = ['일반', '지속', '장착', '속공', '필드', '의식'];
-        const spellType = rd(spellTypeList);
+        let spellType;
+        if(cardType == '마법') {
+            spellType = rd(spellTypeList);
+        }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 함정 카드 종류
         const trapTypeList = ['일반', '지속', '카운터'];
-        const trapType = rd(trapTypeList);
+        let trapType;
+        if(cardType == '함정') {
+            trapType = rd(trapTypeList);
+        }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
