@@ -30,42 +30,36 @@ app.on('message', msg => {
 
         // 몬스터 카드 종류
         const monsterCardTypeList = ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '펜듈럼', '링크']
-        const monsterCardType = rd(monsterCardTypeList);
+        const monsterCardType = (cardType == '몬스터') ? rd(monsterCardTypeList) : "";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 카드 속성
         const attributeList = ['어둠', '빛', '땅', '물', '화염', '바람', '신'];
-        const attribute = rd(attributeList);
+        const attribute = (cardType == '몬스터') ? rd(attributeList) : "";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 몬스터 종족
         const monsterTypeList = ['곤충족', '공룡족', '기계족', '드래곤족', '마법사족', '물족', '번개족', '비행야수족', '사이버스족', '사이킥족', '식물족' ,'악마족' ,'암석족', '야수족', '야수전사족', '어류족', '언데드족', '전사족', '천사족', '파충류족', '해룡족', '화염족', '환룡족', '환신야수족', '창조신족']
-        const monsterType = rd(monsterTypeList);
+        const monsterType = (cardType == '몬스터') ? rd(monsterTypeList) : "";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 레벨, 랭크 수
-        const stars = Math.floor(Math.random() * 13);
+        const stars = (cardType == '몬스터') ? Math.floor(Math.random() * 13) : "";
 
 //////////////////////////////////////////////////////////////////////////////////////////
         
         // 마법 종류
         const spellTypeList = ['일반', '지속', '장착', '속공', '필드', '의식'];
-        let spellType;
-        if(cardType == '마법') {
-            spellType = rd(spellTypeList);
-        }
+        const spellType = (cardType == '마법') ? rd(spellTypeList) : "";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 함정 카드 종류
         const trapTypeList = ['일반', '지속', '카운터'];
-        let trapType;
-        if(cardType == '함정') {
-            trapType = rd(trapTypeList);
-        }
+        const trapType = (cardType == '함정') ? rd(trapTypeList) : "";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -96,7 +90,7 @@ app.on('message', msg => {
         const linkArrowsList = ['↖', '↑', '↗', '←', '→', '↙', '↓', '↘'];
                     
         // 링크 수
-        const linkNumber = Math.floor((Math.random() * linkArrowsList.length));
+        const linkNumber = (cardType == '몬스터') ? Math.floor((Math.random() * linkArrowsList.length)) : "";
 
         // 마커 방향
         const linkArrow = [];
