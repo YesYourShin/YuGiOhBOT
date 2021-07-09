@@ -61,7 +61,9 @@ app.on('message', msg => {
 
         // 카드 속성
         const attributeList = ['어둠', '빛', '땅', '물', '화염', '바람', '신'];
-        const attribute = (cardType == '몬스터') ? rd(attributeList) : "";
+        const attribute = (cardType == '몬스터') ? rd(attributeList) : 
+                            (cardType == '마법') ? '마법' : 
+                            (cardType == '함정') ? '함정' : '' ;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -88,26 +90,26 @@ app.on('message', msg => {
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-        // 펜듈럼 스케일
-        // let pendulumScaleMin = 0;
-        // let pendulumScaleMax = 0;
-        // if (monsterCardTypes.includes('펜듈럼')) {
-        //     for (let i = 0; i < 2; i++) {
-        //         let pendulumScale = Math.floor(Math.random() * 14);
-        //         if (i == 0) {
-        //             pendulumScaleMin = pendulumScale;
-        //         }else if(i == 1) {
-        //             pendulumScaleMax = pendulumScale;
-        //             if(pendulumScaleMin > pendulumScaleMax) {
-        //                 pendulumScale = pendulumScaleMin;
-        //                 pendulumScaleMin = pendulumScaleMax;
-        //                 pendulumScaleMax = pendulumScale;
-        //             }
-        //         }
+        // 스케일
+        let pendulumScaleMin = 0;
+        let pendulumScaleMax = 0;
+        if (monsterCardTypes.includes('펜듈럼')) {
+            for (let i = 0; i < 2; i++) {
+                let pendulumScale = Math.floor(Math.random() * 14);
+                if (i == 0) {
+                    pendulumScaleMin = pendulumScale;
+                }else if(i == 1) {
+                    pendulumScaleMax = pendulumScale;
+                    if(pendulumScaleMin > pendulumScaleMax) {
+                        pendulumScale = pendulumScaleMin;
+                        pendulumScaleMin = pendulumScaleMax;
+                        pendulumScaleMax = pendulumScale;
+                    }
+                }
                 
-        //     }
-        // }
-        // console.log(pendulumScaleMin, pendulumScaleMax);
+            }
+        }
+        console.log(pendulumScaleMin, pendulumScaleMax);
         
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -160,8 +162,8 @@ app.on('message', msg => {
         // const text = `[${name}]\n\n${description}`; // 카드 이름 줄바꿈 줄바꿈 효과 를 저장
         const text = new discord.MessageEmbed()
             .setColor('#0099ff')
-            .setTitle(name)
-            .setDescription(`[${monsterCardTypes}]\n`+description);
+            .setTitle(name+'          '+attribute)
+            .setDescription('레벨: '+stars+`[${monsterCardTypes}]\n`+description);
 
         msg.channel.send(text); // 저장한 카드 이름과 효과를 코드 블럭 메세지로 보냄
     }
