@@ -1,3 +1,7 @@
 node_modules
 .env
 dict
+__MACOSX
+res
+broly.jpg
+out.png

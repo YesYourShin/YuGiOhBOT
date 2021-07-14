@@ -8,6 +8,9 @@ const app = new discord.Client(); // discord.Client 인스턴스 생성
 const cardNameDict = dictionary.makeDictionary('dict/card-name.txt');
 const cardDescDict = dictionary.makeDictionary('dict/card-desc.txt');
 
+const fs = require('fs');
+const {generateCard} = require('./ygo-card');
+
 app.on('ready', () => { // 여기서 사용되는 Arrow Function은 콜백함수입니다.
     console.log(`I am Ready ${app.user.tag}`); // Bot이 준비가 되면 실행할 콜백함수입니다.
 });
@@ -34,7 +37,7 @@ app.on('message', msg => {
     // const monsterCardTypeList = ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '펜듈럼', '링크']
     // const monsterCardType = (cardType == '몬스터') ? rd(monsterCardTypeList) : "";
 
-    const monsterCardTypes = monsterCardType(cardType);
+    // const monsterCardTypes = monsterCardType(cardType);
     // for(let i = 0; i < monsterCardTypes.length; i++) {
     //     if(monsterCardTypeArr[i] != '') {
     //         monsterCardTypeArr[i] = monsterCardTypes[i];
@@ -42,7 +45,7 @@ app.on('message', msg => {
     //         break;
     //     }
     // }
-    console.log(monsterCardTypes);
+    // console.log(monsterCardTypes);
         // if (cardType == '몬스터') {
         //     const monsterCardType1List = ['효과', ''];
         //     const monsterCardType1 = rd(monsterCardType1List);
@@ -55,6 +58,37 @@ app.on('message', msg => {
         //     const monsterCardType3 = rd(monsterCardType2List);
         //     return result = [monsterCardType3, monsterCardType2, monsterCardType1];
         // }
+
+        let monsterCardTypes = '';
+    if (cardType == '몬스터') {
+        const monsterCardType1List = ['효과', ''];
+        const monsterCardType1 = rd(monsterCardType1List);
+        const monsterCardType2List = (monsterCardType1 == '효과') ? ['툰', '스피릿', '튜너', '리버스', '펜듈럼'] :
+                                    (monsterCardType1 == '') ? ['일반', '효과'] : '';
+        const monsterCardType2 = rd(monsterCardType2List);
+        const monsterCardType3List = (monsterCardType2 == '일반') ? ['튜너', '펜듈럼'] :
+                                    (monsterCardType2 == '효과') ? ['툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '특수소환', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'] : 
+                                    (monsterCardType2 == '툰' || monsterCardType2 == '스피릿') ? ['특수소환'] : 
+                                    (monsterCardType2 == '튜너') ? ['유니온', '특수소환', '융합'] : 
+                                    (monsterCardType2 == '리버스') ? ['펜듈럼'] : 
+                                    (monsterCardType2 == '펜듈럼') ? ['특수소환', '융합', '싱크로', '엑시즈'] : ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'];
+                                    
+        const monsterCardType3 = rd(monsterCardType3List);
+        const result = [monsterCardType3, monsterCardType2, monsterCardType1];
+        for(let i = 0; i < result.length; i++) {
+            if(result[i] != '') {
+                monsterCardTypes = monsterCardTypes+result[i];
+                monsterCardTypes = monsterCardTypes + ' / ';
+                if (i == 2) {
+                    monsterCardTypes = monsterCardTypes.slice(0, -2);
+                }
+            }else if (result[i] == ''){
+                monsterCardTypes = monsterCardTypes.slice(0, -2);
+                break;
+            }
+        } 
+    }
+        
 
         
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -160,12 +194,26 @@ app.on('message', msg => {
 
 
         // const text = `[${name}]\n\n${description}`; // 카드 이름 줄바꿈 줄바꿈 효과 를 저장
-        const text = new discord.MessageEmbed()
-            .setColor('#0099ff')
-            .setTitle(name+'          '+attribute)
-            .setDescription('레벨: '+stars+`[${monsterCardTypes}]\n`+description);
+        // const text = new discord.MessageEmbed()
+        //     .setColor('#0099ff')
+        //     .setTitle(name+'          '+attribute)
+        //     .setDescription('레벨: '+stars+`[${monsterCardTypes}]\n`+description);
 
-        msg.channel.send(text); // 저장한 카드 이름과 효과를 코드 블럭 메세지로 보냄
+        const broly = {
+            name: name,
+            nameStyle: 'white',
+            text: description,
+            artPath: 'broly.jpg',
+            type: 'standard',
+            monsterType: monsterType + ' / ' + monsterCardTypes,
+            attribute: attribute,
+            level: stars,
+        }
+        
+        generateCard(broly).then((buffer) => fs.writeFileSync('out.png', buffer))
+
+
+        msg.channel.send({files: ['./out.png']}); // 저장한 카드 이름과 효과를 코드 블럭 메세지로 보냄
     }
 
     // 채팅에서 메세지가 들어왔을 때 실행할 콜백함수입니다.
@@ -178,38 +226,38 @@ function rd(value) {
     return value[random];
 }
 
-function monsterCardType(cardType) {
-    // 몬스터 카드 종류
-    // const monsterCardTypeList = ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '펜듈럼', '링크']
-    // const monsterCardType = (cardType == '몬스터') ? rd(monsterCardTypeList) : "";
-    let monsterCardTypes = ' ';
-    if (cardType == '몬스터') {
-        const monsterCardType1List = ['효과', ''];
-        const monsterCardType1 = rd(monsterCardType1List);
-        const monsterCardType2List = (monsterCardType1 == '효과') ? ['툰', '스피릿', '튜너', '리버스', '펜듈럼'] :
-                                    (monsterCardType1 == '') ? ['일반', '효과'] : '';
-        const monsterCardType2 = rd(monsterCardType2List);
-        const monsterCardType3List = (monsterCardType2 == '일반') ? ['튜너', '펜듈럼'] :
-                                    (monsterCardType2 == '효과') ? ['툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '특수소환', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'] : 
-                                    (monsterCardType2 == '툰' || monsterCardType2 == '스피릿') ? ['특수소환'] : 
-                                    (monsterCardType2 == '튜너') ? ['유니온', '특수소환', '융합'] : 
-                                    (monsterCardType2 == '리버스') ? ['펜듈럼'] : 
-                                    (monsterCardType2 == '펜듈럼') ? ['특수소환', '융합', '싱크로', '엑시즈'] : ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'];
+// function monsterCardType(cardType) {
+//     // 몬스터 카드 종류
+//     // const monsterCardTypeList = ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '펜듈럼', '링크']
+//     // const monsterCardType = (cardType == '몬스터') ? rd(monsterCardTypeList) : "";
+//     let monsterCardTypes = ' ';
+//     if (cardType == '몬스터') {
+//         const monsterCardType1List = ['효과', ''];
+//         const monsterCardType1 = rd(monsterCardType1List);
+//         const monsterCardType2List = (monsterCardType1 == '효과') ? ['툰', '스피릿', '튜너', '리버스', '펜듈럼'] :
+//                                     (monsterCardType1 == '') ? ['일반', '효과'] : '';
+//         const monsterCardType2 = rd(monsterCardType2List);
+//         const monsterCardType3List = (monsterCardType2 == '일반') ? ['튜너', '펜듈럼'] :
+//                                     (monsterCardType2 == '효과') ? ['툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '특수소환', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'] : 
+//                                     (monsterCardType2 == '툰' || monsterCardType2 == '스피릿') ? ['특수소환'] : 
+//                                     (monsterCardType2 == '튜너') ? ['유니온', '특수소환', '융합'] : 
+//                                     (monsterCardType2 == '리버스') ? ['펜듈럼'] : 
+//                                     (monsterCardType2 == '펜듈럼') ? ['특수소환', '융합', '싱크로', '엑시즈'] : ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'];
                                     
-        const monsterCardType3 = rd(monsterCardType3List);
-        const result = [monsterCardType3, monsterCardType2, monsterCardType1];
-        for(let i = 0; i < result.length; i++) {
-            if(result[i] != '') {
-                monsterCardTypes = monsterCardTypes+result[i];
-                monsterCardTypes = monsterCardTypes + ' / ';
-            }else if (result[i] == ''){
-                break;
-            }
+//         const monsterCardType3 = rd(monsterCardType3List);
+//         const result = [monsterCardType3, monsterCardType2, monsterCardType1];
+//         for(let i = 0; i < result.length; i++) {
+//             if(result[i] != '') {
+//                 monsterCardTypes = monsterCardTypes+result[i];
+//                 monsterCardTypes = monsterCardTypes + ' / ';
+//             }else if (result[i] == ''){
+//                 break;
+//             }
             
             
-        }return monsterCardTypes = monsterCardTypes.slice(0, -2);
+//         }return monsterCardTypes = monsterCardTypes.slice(0, -2);
         
-    }
-}
+//     }
+// }
 
 app.login(token); 
