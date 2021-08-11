@@ -59,120 +59,48 @@ app.on('message', msg => {
         //     return result = [monsterCardType3, monsterCardType2, monsterCardType1];
         // }
 
-        let monsterCardTypes = '';
-    if (cardType == '몬스터') {
-        const monsterCardType1List = ['효과', ''];
-        const monsterCardType1 = rd(monsterCardType1List);
-        const monsterCardType2List = (monsterCardType1 == '효과') ? ['툰', '스피릿', '튜너', '리버스', '펜듈럼'] :
-                                    (monsterCardType1 == '') ? ['일반', '효과'] : '';
-        const monsterCardType2 = rd(monsterCardType2List);
-        const monsterCardType3List = (monsterCardType2 == '일반') ? ['튜너', '펜듈럼'] :
-                                    (monsterCardType2 == '효과') ? ['툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '특수소환', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'] : 
-                                    (monsterCardType2 == '툰' || monsterCardType2 == '스피릿') ? ['특수소환'] : 
-                                    (monsterCardType2 == '튜너') ? ['유니온', '특수소환', '융합'] : 
-                                    (monsterCardType2 == '리버스') ? ['펜듈럼'] : 
-                                    (monsterCardType2 == '펜듈럼') ? ['특수소환', '융합', '싱크로', '엑시즈'] : ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'];
-                                    
-        const monsterCardType3 = rd(monsterCardType3List);
-        const result = [monsterCardType3, monsterCardType2, monsterCardType1];
-        for(let i = 0; i < result.length; i++) {
-            if(result[i] != '') {
-                monsterCardTypes = monsterCardTypes+result[i];
-                monsterCardTypes = monsterCardTypes + ' / ';
-                if (i == 2) {
-                    monsterCardTypes = monsterCardTypes.slice(0, -2);
-                }
-            }else if (result[i] == ''){
-                monsterCardTypes = monsterCardTypes.slice(0, -2);
-                break;
-            }
-        } 
-    }
-        
+        // 몬스터 카드 종류
+        const monsterCardTypes = getMonsterCardType(cardType);
 
-        
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 카드 속성
-        const attributeList = ['어둠', '빛', '땅', '물', '화염', '바람', '신'];
-        const attribute = (cardType == '몬스터') ? rd(attributeList) : 
-                            (cardType == '마법') ? '마법' : 
-                            (cardType == '함정') ? '함정' : '' ;
+        const attribute = getAttribute(cardType);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 몬스터 종족
-        const monsterTypeList = ['곤충족', '공룡족', '기계족', '드래곤족', '마법사족', '물족', '번개족', '비행야수족', '사이버스족', '사이킥족', '식물족' ,'악마족' ,'암석족', '야수족', '야수전사족', '어류족', '언데드족', '전사족', '천사족', '파충류족', '해룡족', '화염족', '환룡족', '환신야수족', '창조신족']
-        const monsterType = (cardType == '몬스터') ? rd(monsterTypeList) : "";
+        const monsterType = getMonsterType(cardType);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 레벨, 랭크 수
-        const stars = (cardType == '몬스터') ? Math.floor(Math.random() * 12)+1 : "";
+        const stars = getStars(cardType);
 
 //////////////////////////////////////////////////////////////////////////////////////////
         
         // 마법 종류
-        const spellTypeList = ['일반', '지속', '장착', '속공', '필드', '의식'];
-        const spellType = (cardType == '마법') ? rd(spellTypeList) : "";
+        const spellType = getSpellType(cardType);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 함정 카드 종류
-        const trapTypeList = ['일반', '지속', '카운터'];
-        const trapType = (cardType == '함정') ? rd(trapTypeList) : "";
+        const trapType = getTrapType(cardType);
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
         // 스케일
-        let pendulumScaleMin = 0;
-        let pendulumScaleMax = 0;
-        if (monsterCardTypes.includes('펜듈럼')) {
-            for (let i = 0; i < 2; i++) {
-                let pendulumScale = Math.floor(Math.random() * 14);
-                if (i == 0) {
-                    pendulumScaleMin = pendulumScale;
-                }else if(i == 1) {
-                    pendulumScaleMax = pendulumScale;
-                    if(pendulumScaleMin > pendulumScaleMax) {
-                        pendulumScale = pendulumScaleMin;
-                        pendulumScaleMin = pendulumScaleMax;
-                        pendulumScaleMax = pendulumScale;
-                    }
-                }
-                
-            }
-        }
-        console.log(pendulumScaleMin, pendulumScaleMax);
+        const pendulumScale = getPendulumScale(monsterCardTypes);
+        const pendulumScaleMin = pendulumScale[0];
+        const pendulumScaleMax = pendulumScale[1];
         
 //////////////////////////////////////////////////////////////////////////////////////////
 
-        // 링크마커 방향 리스트
-        const linkArrowsList = ['↖', '↑', '↗', '←', '→', '↙', '↓', '↘'];
-                    
-        // 링크 수
-        const linkNumber = (cardType == '몬스터') ? Math.floor((Math.random() * linkArrowsList.length)) : "";
-
-        // 마커 방향
-        const linkArrow = [];
-
-        if(monsterType == '링크') {
-            
-            
-            // 링크 마커 방향 중복 제거해서 링크 수만큼 넣기
-            for (let i = 0; i < linkNumber; i++) {
-                let Arrows;
-                do{
-                    Arrows = rd(linkArrowsList);
-                    // console.log(Arrows);
-                } while(linkArrow.includes(Arrows))
-                
-                linkArrow.push(Arrows);
-            }
-
-            // console.log(linkNumber, linkArrow);
-        }
-        console.log(monsterCardTypes, linkNumber, linkArrow);
+        // 링크
+        const link = getLinkArrows(cardType, monsterCardTypes);
+        const linkArrows = link[0];
+        const linkNumber = link[1];
+        console.log('링크 ' + linkArrows +' '+ linkNumber);
 
 //////////////////////////////////////////////////////////////////////////////////////////
         
@@ -199,21 +127,24 @@ app.on('message', msg => {
         //     .setTitle(name+'          '+attribute)
         //     .setDescription('레벨: '+stars+`[${monsterCardTypes}]\n`+description);
 
-        const broly = {
-            name: name,
-            nameStyle: 'white',
-            text: description,
-            artPath: 'broly.jpg',
-            type: 'standard',
-            monsterType: monsterType + ' / ' + monsterCardTypes,
-            attribute: attribute,
-            level: stars,
-        }
+////////////////////////////////////////////////////////////////
+
+        // const broly = {
+        //     name: name,
+        //     nameStyle: 'white',
+        //     text: description,
+        //     artPath: 'broly.jpg',
+        //     type: 'standard',
+        //     monsterType: monsterType + ' / ' + monsterCardTypes,
+        //     attribute: attribute,
+        //     level: stars,
+        // }
         
-        generateCard(broly).then((buffer) => fs.writeFileSync('out.png', buffer))
+        // generateCard(broly).then((buffer) => {msg.channel.send(buffer)})
 
+////////////////////////////////////////////////////////////////
 
-        msg.channel.send({files: ['./out.png']}); // 저장한 카드 이름과 효과를 코드 블럭 메세지로 보냄
+        // msg.channel.send({files: ['./out.png']}); // 저장한 카드 이름과 효과를 코드 블럭 메세지로 보냄
     }
 
     // 채팅에서 메세지가 들어왔을 때 실행할 콜백함수입니다.
@@ -224,6 +155,145 @@ app.on('message', msg => {
 function rd(value) {
     const random = Math.floor(Math.random() * value.length);
     return value[random];
+}
+
+function getMonsterCardType(cardType) {
+    const monsterCardTypes = ['특수소환', '링크', '효과'];
+    // let monsterCardTypes = '';
+    // if (cardType == '몬스터') {
+    //     const monsterCardType1List = ['효과', ''];
+    //     const monsterCardType1 = rd(monsterCardType1List);
+    //     const monsterCardType2List = (monsterCardType1 == '효과') ? ['툰', '스피릿', '튜너', '리버스', '펜듈럼'] :
+    //                                 (monsterCardType1 == '') ? ['일반', '효과'] : '';
+    //     const monsterCardType2 = rd(monsterCardType2List);
+    //     const monsterCardType3List = (monsterCardType2 == '일반') ? ['튜너', '펜듈럼'] :
+    //                                 (monsterCardType2 == '효과') ? ['툰', '스피릿', '유니온', '듀얼', '튜너', '리버스', '특수소환', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'] : 
+    //                                 (monsterCardType2 == '툰' || monsterCardType2 == '스피릿') ? ['특수소환'] : 
+    //                                 (monsterCardType2 == '튜너') ? ['유니온', '특수소환', '융합'] : 
+    //                                 (monsterCardType2 == '리버스') ? ['펜듈럼'] : 
+    //                                 (monsterCardType2 == '펜듈럼') ? ['특수소환', '융합', '싱크로', '엑시즈'] : ['일반', '효과', '의식', '융합', '싱크로', '엑시즈', '펜듈럼', '링크'];
+                                    
+    //     const monsterCardType3 = rd(monsterCardType3List);
+    //     const result = [monsterCardType3, monsterCardType2, monsterCardType1];
+    //     for(let i = 0; i < result.length; i++) {
+    //         if(result[i] != '') {
+    //             monsterCardTypes = monsterCardTypes+result[i];
+    //             monsterCardTypes = monsterCardTypes + ' / ';
+    //             if (i == 2) {
+    //                 monsterCardTypes = monsterCardTypes.slice(0, -2);
+    //             }
+    //         }else if (result[i] == ''){
+    //             monsterCardTypes = monsterCardTypes.slice(0, -2);
+    //             break;
+    //         }
+    //     } 
+    // }
+
+    return monsterCardTypes;
+}
+
+function getAttribute(cardType) {
+    const attributeList = ['어둠', '빛', '땅', '물', '화염', '바람', '신'];
+    const attribute = (cardType == '몬스터') ? rd(attributeList) : 
+                        (cardType == '마법') ? '마법' : 
+                        (cardType == '함정') ? '함정' : '' ;
+
+    return attribute;
+}
+
+function getMonsterType(cardType) {
+    const monsterTypeList = ['곤충족', '공룡족', '기계족', '드래곤족', '마법사족', '물족', '번개족', '비행야수족', '사이버스족', '사이킥족', '식물족' ,'악마족' ,'암석족', '야수족', '야수전사족', '어류족', '언데드족', '전사족', '천사족', '파충류족', '해룡족', '화염족', '환룡족', '환신야수족', '창조신족']
+    const monsterType = (cardType == '몬스터') ? rd(monsterTypeList) : "";
+
+    return monsterType;
+}
+
+function getStars(cardType) {
+    const stars = (cardType == '몬스터') ? Math.floor(Math.random() * 12)+1 : "";
+
+    return stars;
+}
+
+function getSpellType(cardType) {
+    const spellTypeList = ['일반', '지속', '장착', '속공', '필드', '의식'];
+    const spellType = (cardType == '마법') ? rd(spellTypeList) : "";
+
+    return spellType;
+}
+
+function getTrapType(cardType) {
+    const trapTypeList = ['일반', '지속', '카운터'];
+    const trapType = (cardType == '함정') ? rd(trapTypeList) : "";
+
+    return trapType;
+}
+
+function getPendulumScale(monsterCardTypes) {
+    let min = 0;
+    let max = 0;
+
+    if (monsterCardTypes.includes('펜듈럼')) {
+        function RandomScale() {
+            return Math.floor(Math.random() * 14)
+        };
+
+        min = RandomScale();
+        max = RandomScale();
+
+        if (min > max) {
+            let num = min;
+            min = max;
+            max = mum;
+            
+        }
+
+        // for (let i = 0; i < 2; i++) {
+        //     let pendulumScale = Math.floor(Math.random() * 14);
+        //     if (i == 0) {
+        //         pendulumScaleA = pendulumScale;
+        //     }else if(i == 1) {
+        //         pendulumScaleB = pendulumScale;
+        //         if(pendulumScaleA > pendulumScaleB) {
+        //             pendulumScale = pendulumScaleA;
+        //             pendulumScaleA = pendulumScaleB;
+        //             pendulumScaleB = pendulumScale;
+        //         }
+        //     }
+        // }
+        // return [pendulumScaleMix, pendulumScaleMax];
+        
+    }
+
+    return [min, max];
+}
+
+function getLinkArrows(cardType, monsterCardTypes) {
+    // 링크마커 방향 리스트
+    const linkArrowsList = ['↖', '↑', '↗', '←', '→', '↙', '↓', '↘'];
+                    
+    // 링크 수
+    const linkNumber = (cardType == '몬스터') ? Math.floor(((Math.random()+1) * (linkArrowsList.length-1))) : "";
+
+    // 마커 방향
+    const linkArrows = [];
+
+    if(monsterCardTypes.includes('링크')) {            
+        // 링크 마커 방향 중복 제거해서 링크 수만큼 넣기
+        for (let i = 0; i < linkNumber; i++) {
+            let Arrows;
+            do{
+                Arrows = rd(linkArrowsList);
+                // console.log(Arrows);
+            } while(linkArrows.includes(Arrows))
+                
+            linkArrows.push(Arrows);
+        }
+
+            // console.log(linkNumber, linkArrow);
+    }
+        // console.log(monsterCardTypes, linkNumber, linkArrow);
+
+    return [linkArrows, linkNumber];
 }
 
 // function monsterCardType(cardType) {
